@@ -18,6 +18,14 @@
 3. (Необязательная часть, *) Изучите инструкцию в проекте и запустите web-приложение без использования docker в venv. (Mysql БД можно запустить в docker run).
 4. (Необязательная часть, *) По образцу предоставленного python кода внесите в него исправление для управления названием используемой таблицы через ENV переменную.
 
+
+## Ответ 1 
+1. Ссылка на [fork](https://github.com/alexandreevich/shvirtd-example-python/tree/main)
+2. Ссылка на [Dockerfile.python](https://github.com/alexandreevich/shvirtd-example-python/blob/main/Dockerfile.python)
+3. Сборка успешно осуществлена командой: docker build -t myimage -f ./Dockerfile.python .
+4. ![Снимок экрана 2024-02-23 в 12 52 46](https://github.com/alexandreevich/virtd-homeworks/assets/109306886/81cbb635-1dcd-4f5d-bf71-dc4c6127b2e5)
+
+
 ## Задача 2 (*)
 1. Создайте в yandex cloud container registry с именем "test" с помощью "yc tool" . [Инструкция](https://cloud.yandex.ru/ru/docs/container-registry/quickstart/?from=int-console-help)
 2. Настройте аутентификацию вашего локального docker в yandex container registry.
@@ -39,6 +47,24 @@
 
 6. Остановите проект. В качестве ответа приложите скриншот sql-запроса.
 
+## Ответ 3 
+1. Ссылка на [compose.yaml](https://github.com/alexandreevich/shvirtd-example-python/blob/main/compose.yaml)
+2. У меня не поднялся проект, возникла ошибка: User specified IP address is supported only when connecting to networks with user configured subnets
+Как я понял, он не мог создать сеть. Поэтому я прописал командой сеть: docker network create --subnet 172.28.0.0/24 app_subnet
+В compose.yaml & proxy.yaml прописал:
+```
+ external: true
+```
+И после этого заработало.
+
+Curl работает, однако не возвращает IP.
+![Снимок экрана 2024-02-24 в 14 48 00](https://github.com/alexandreevich/virtd-homeworks/assets/109306886/e637cf5f-c8f0-4318-be03-dc95c8df0842)
+В БД подключался, там видны подключения, но IP так же не пишется: 
+![Снимок экрана 2024-02-24 в 15 06 59](https://github.com/alexandreevich/virtd-homeworks/assets/109306886/4b78013f-13fa-4f20-926a-b43539e860b2)
+
+
+
+
 ## Задача 4
 1. Запустите в Yandex Cloud ВМ (вам хватит 2 Гб Ram).
 2. Подключитесь к Вм по ssh и установите docker.
@@ -46,6 +72,34 @@
 4. Зайдите на сайт проверки http подключений, например(или аналогичный): ```https://check-host.net/check-http``` и запустите проверку вашего сервиса ```http://<внешний_IP-адрес_вашей_ВМ>:8090```. Таким образом трафик будет направлен в ingress-proxy.
 5. (Необязательная часть) Дополнительно настройте remote ssh context к вашему серверу. Отобразите список контекстов и результат удаленного выполнения ```docker ps -a```
 6. В качестве ответа повторите  sql-запрос и приложите скриншот с данного сервера, bash-скрипт и ссылку на fork-репозиторий.
+
+
+
+## Ответ 4
+1. Использовал изначально terraform для разворачивания вм:
+![Снимок экрана 2024-02-24 в 16 29 41](https://github.com/alexandreevich/virtd-homeworks/assets/109306886/d679af18-cea4-4bab-8a64-9f4944561e9f)
+2. Cкрипт:
+```
+# Клонируем репозиторий, если он еще не клонирован
+if [ ! -d "/opt/shvirtd-example-python" ] ; then
+    echo "Клонирование репозитория..."
+    sudo git clone https://github.com/alexandreevich/shvirtd-example-python.git /opt/shvirtd-example-python
+else
+    echo "Репозиторий уже клонирован."
+    cd /opt/shvirtd-example-python
+    sudo git pull
+fi
+
+# Переходим в директорию проекта
+cd /opt/shvirtd-example-python
+
+# Запускаем проект
+echo "Запуск проекта..."
+sudo docker-compose -f compose.yaml -f proxy.yaml up -d
+```
+3. Сайт отработал штатно, однако IP не отобразились в БД:
+![Снимок экрана 2024-02-24 в 15 51 53](https://github.com/alexandreevich/virtd-homeworks/assets/109306886/93cc2a60-bf89-4637-897a-64633df7c294)
+
 
 ## Задача 5 (*)
 1. Напишите и задеплойте на вашу облачную ВМ bash скрипт, который произведет резервное копирование БД mysql в директорию "/opt/backup" с помощью запуска в сети "backend" контейнера из образа ```schnitzler/mysqldump``` при помощи ```docker run ...``` команды. Подсказка: "документация образа."
@@ -56,10 +110,15 @@
 ## Задача 6
 Скачайте docker образ ```hashicorp/terraform:latest``` и скопируйте бинарный файл ```/bin/terraform``` на свою локальную машину, используя dive и docker save.
 Предоставьте скриншоты  действий .
+![Снимок экрана 2024-02-24 в 16 56 42](https://github.com/alexandreevich/virtd-homeworks/assets/109306886/7aa7afbb-ea5f-494d-a16b-f6c22db7dda0)
+
+docker save hashicorp/terraform:latest > terraform-image.tar
 
 ## Задача 6.1
 Добейтесь аналогичного результата, используя docker cp.  
 Предоставьте скриншоты  действий .
+![Снимок экрана 2024-02-24 в 17 00 42](https://github.com/alexandreevich/virtd-homeworks/assets/109306886/d70956ea-a9f1-4b78-8e85-1ee59a320009)
+
 
 ## Задача 6.2 (**)
 Предложите способ извлечь файл из контейнера, используя только команду docker build и любой Dockerfile.  
