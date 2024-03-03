@@ -49,18 +49,22 @@
 
 ## Ответ 3 
 1. Ссылка на [compose.yaml](https://github.com/alexandreevich/shvirtd-example-python/blob/main/compose.yaml)
-2. У меня не поднялся проект, возникла ошибка: User specified IP address is supported only when connecting to networks with user configured subnets
-Как я понял, он не мог создать сеть. Поэтому я прописал командой сеть: docker network create --subnet 172.28.0.0/24 app_subnet
-В compose.yaml & proxy.yaml прописал:
+  
+~~У меня не поднялся проект, возникла ошибка: User specified IP address is supported only when connecting to networks with user configured subnets~~
+~~Как я понял, он не мог создать сеть. Поэтому я прописал командой сеть: docker network create --subnet 172.28.0.0/24 app_subnet~~
+~~В compose.yaml & proxy.yaml прописал:~~
 ```
  external: true
 ```
-И после этого заработало.
+~~И после этого заработало.~~
 
-Curl работает, однако не возвращает IP.
-![Снимок экрана 2024-02-24 в 14 48 00](https://github.com/alexandreevich/virtd-homeworks/assets/109306886/e637cf5f-c8f0-4318-be03-dc95c8df0842)
-В БД подключался, там видны подключения, но IP так же не пишется: 
-![Снимок экрана 2024-02-24 в 15 06 59](https://github.com/alexandreevich/virtd-homeworks/assets/109306886/4b78013f-13fa-4f20-926a-b43539e860b2)
+Разобрался с портами, все корректно заработало:
+
+<img width="1369" alt="Снимок экрана 2024-03-01 в 20 49 12" src="https://github.com/alexandreevich/virtd-homeworks/assets/109306886/50e2f353-8363-415d-b8dd-086e58ab7a9f">
+
+В БД отображаются запросы:
+
+<img width="329" alt="Снимок экрана 2024-03-01 в 21 48 58" src="https://github.com/alexandreevich/virtd-homeworks/assets/109306886/8931d2b9-56ca-4c65-8d0f-2c571d628691">
 
 
 
@@ -97,8 +101,10 @@ cd /opt/shvirtd-example-python
 echo "Запуск проекта..."
 sudo docker-compose -f compose.yaml -f proxy.yaml up -d
 ```
-3. Сайт отработал штатно, однако IP не отобразились в БД:
-![Снимок экрана 2024-02-24 в 15 51 53](https://github.com/alexandreevich/virtd-homeworks/assets/109306886/93cc2a60-bf89-4637-897a-64633df7c294)
+3. Сайт отработал штатно:
+
+   <img width="329" alt="Снимок экрана 2024-03-01 в 21 48 58" src="https://github.com/alexandreevich/virtd-homeworks/assets/109306886/4204c7e6-bb72-4157-aa19-e8b95b82c995">
+
 
 
 ## Задача 5 (*)
